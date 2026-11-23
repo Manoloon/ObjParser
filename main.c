@@ -16,7 +16,15 @@ dynarray_t* vertices = NULL;
 void parse_vertex(const char *input)
 {
     vec4_t vector;
-    if (sscanf(input + 2, "%f %f %f", &vector.x, &vector.y, &vector.z) == 3)
+    char* endptr = (char*)input;
+    vector.x = strtof(input+2,&endptr);
+    if(sscanf(input+2,"%f %f %f %f", &vector.x, &vector.y, &vector.z, &vector.w) == 4)
+    {
+        printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", vector.x, vector.y, vector.z,vector.w);
+        dynArray_push_back(vertices,&vector);
+        return;
+    }
+    if(sscanf(input + 2, "%f %f %f", &vector.x, &vector.y, &vector.z) == 3)
     {
         printf("x:%.2f, y=%.2f, z:%.2f\n", vector.x, vector.y, vector.z);
         vector.w = 1.0f;
