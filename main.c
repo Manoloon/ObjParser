@@ -101,7 +101,7 @@ int main(int argc,char* argv[]) {
         return EXIT_FAILURE;
     }
     printf("Vertices\n");
-    
+
     for(size_t i = 0; i < size; i++)
     {
         vec4_t item = items[i];
