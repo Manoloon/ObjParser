@@ -33,7 +33,6 @@ void parse_line(dynarray_t* input)
     }
     size_t size = dynArray_get_length(input);
     const char *items = dynArray_get_items(input);
-    char space = items[1];
     if (size > 2) 
     {
       // vertex
@@ -56,7 +55,7 @@ int main(int argc,char* argv[]) {
     if(file == NULL)
     {
         fprintf(stderr,"failed to open file\n");
-        return -1;
+        return EXIT_FAILURE;
     }
     vertices = dynArray_create(sizeof(vec4_t));
 
@@ -66,7 +65,8 @@ int main(int argc,char* argv[]) {
     if(line_buffer == NULL)
     {
         fprintf(stderr,"line_buffer push_back failed\n");
-        return 1;
+        fclose(file);
+        return EXIT_FAILURE;
     }
     // lectura char por char
     while(parsing == 1)
@@ -98,6 +98,9 @@ int main(int argc,char* argv[]) {
     if(items == NULL)
     {
         fprintf(stderr,"Items from vertices is NULL\n");
+        fclose(file);
+        dynArray_free(&line_buffer);
+        line_buffer = NULL;
         return EXIT_FAILURE;
     }
     printf("Vertices\n");
@@ -105,11 +108,7 @@ int main(int argc,char* argv[]) {
     for(size_t i = 0; i < size; i++)
     {
         vec4_t item = items[i];
-        for(int v = 0; v < 3; v++)
-        {
-            printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", item.x, item.y, item.z,item.w);
-        }
-        printf("\n");
+        printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", item.x, item.y, item.z,item.w);
     }
     fclose(file);
     dynArray_free(&line_buffer);
