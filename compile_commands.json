@@ -1,8 +1,0 @@
-[
-{
-  "directory": "C:/Coding/C/Parser/build",
-  "command": "C:\\msys64\\mingw64\\bin\\gcc.exe  @CMakeFiles/Parser.dir/includes_C.rsp -g -std=gnu11 -o CMakeFiles\\Parser.dir\\main.c.obj -c C:\\Coding\\C\\Parser\\main.c",
-  "file": "C:/Coding/C/Parser/main.c",
-  "output": "CMakeFiles/Parser.dir/main.c.obj"
-}
-]
