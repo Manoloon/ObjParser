@@ -6,6 +6,3 @@ find_package(UtilityDS REQUIRED)
 add_executable(Parser main.c)
 add_compile_options(-std=c11 -Wall -Wextra -Wpedantic -Wshadow)
 target_link_libraries(Parser PRIVATE UtilityDS::UtilityDS)
-#target_include_directories(Parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/External/include)
-#target_link_libraries(Parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/External/lib/libUtilityDS.a)
-

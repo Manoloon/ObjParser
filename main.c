@@ -3,6 +3,28 @@
 #include <ctype.h>
 #include <string.h>
 #include "dynamicArray.h"
+/*
+face_t cube_faces[N_CUBE_FACES]=
+{
+    // front
+    {.a = 1, .b = 2, .c = 3},
+    {.a = 1, .b = 3, .c = 4},
+    // right
+    {.a = 4, .b = 3, .c = 5},
+    {.a = 4, .b = 5, .c = 6},
+    // back
+    {.a = 6, .b = 5, .c = 7},
+    {.a = 6, .b = 7, .c = 8},
+    // left
+    {.a = 8, .b = 7, .c = 2},
+    {.a = 8, .b = 2, .c = 1},
+    // top
+    {.a = 2, .b = 7, .c = 5},
+    {.a = 2, .b = 5, .c = 3},
+    // botton
+    {.a = 6, .b = 8, .c = 1},
+    {.a = 6, .b = 1, .c = 4}
+};*/
 
 typedef struct
 {
@@ -12,12 +34,17 @@ typedef struct
     float w;
 }vec4_t;
 dynarray_t* vertices = NULL;
-
+dynarray_t* faces = NULL;
+void parse_face(const char* input)
+{
+    
+}
 void parse_vertex(const char *input)
 {
     vec4_t vector;
-    char* endptr = (char*)input;
-    vector.x = strtof(input+2,&endptr);
+    // char* endptr = (char*)input;
+    // vector.x = strtof(input+2,&endptr);
+    // vector
     if(sscanf(input+2,"%f %f %f %f", &vector.x, &vector.y, &vector.z, &vector.w) == 4)
     {
         printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", vector.x, vector.y, vector.z,vector.w);
