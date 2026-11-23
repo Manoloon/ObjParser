@@ -11,6 +11,7 @@ typedef struct
     float z;
     float w;
 }vec4_t;
+dynarray_t* vertices = NULL;
 
 void parse_vertex(const char *input)
 {
@@ -18,13 +19,15 @@ void parse_vertex(const char *input)
     if (sscanf(input + 2, "%f %f %f", &vector.x, &vector.y, &vector.z) == 3)
     {
         printf("x:%.2f, y=%.2f, z:%.2f\n", vector.x, vector.y, vector.z);
+        vector.w = 1.0f;
+        dynArray_push_back(vertices,&vector);
     }
 }
 
 void parse_line(dynarray_t* input)
 {
     if(input == NULL)
-    {
+   {
         fprintf(stderr,"input is NULL\n");
         return;
     }
@@ -47,7 +50,7 @@ int main(int argc,char* argv[]) {
     {
         char* input = argv[1];
     }
-    FILE* file;
+    FILE* file = NULL;
     const char* filename = "Assets/cube.obj";
     file = fopen(filename,"r");
     if(file == NULL)
@@ -55,6 +58,8 @@ int main(int argc,char* argv[]) {
         fprintf(stderr,"failed to open file\n");
         return -1;
     }
+    vertices = dynArray_create(sizeof(vec4_t));
+
     int ch = 0;
     int parsing = 1;
     dynarray_t* line_buffer = dynArray_create(sizeof(char));
@@ -87,8 +92,26 @@ int main(int argc,char* argv[]) {
             parse_line(line_buffer);
         }
     }
+
+    size_t size = dynArray_get_length(vertices);
+    const vec4_t* items = dynArray_get_items(vertices);
+    if(items == NULL)
+    {
+        fprintf(stderr,"Items from vertices is NULL\n");
+        return EXIT_FAILURE;
+    }
+    printf("Vertices\n");
+    
+    for(size_t i = 0; i < size; i++)
+    {
+        vec4_t item = items[i];
+        for(int v = 0; v < 3; v++)
+        {
+            printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", item.x, item.y, item.z,item.w);
+        }
+        printf("\n");
+    }
     fclose(file);
-    dynarray_t* vertex = NULL;
     dynArray_free(&line_buffer);
     line_buffer = NULL;
     return 0;
