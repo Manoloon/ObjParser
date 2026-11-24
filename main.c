@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <string.h>
 #include "dynamicArray.h"
 /*
@@ -33,30 +34,55 @@ typedef struct
     float z;
     float w;
 }vec4_t;
+typedef struct
+{
+    int a;
+    int b;
+    int c;
+}vec3_t;
+typedef struct 
+{
+    vec3_t v1;
+    vec3_t v2;
+    vec3_t v3;
+}face_t;
+
 dynarray_t* vertices = NULL;
 dynarray_t* faces = NULL;
 void parse_face(const char* input)
 {
+    face_t face;
+
+    const int type = 10;
+    char* endptr = NULL;
+    // face
+    face.v1.a = strtol(input+2,&endptr,type);
+    face.v1.b = strtol(endptr+1,&endptr,type);
+    face.v1.c = strtol(endptr+1,&endptr,type);
     
+    face.v2.a = strtol(endptr+1,&endptr,type);
+    face.v2.b = strtol(endptr+1,&endptr,type);
+    face.v2.c = strtol(endptr+1,&endptr,type);
+
+    face.v3.a = strtol(endptr+1,&endptr,type);
+    face.v3.b = strtol(endptr+1,&endptr,type);
+    face.v3.c = strtol(endptr+1,&endptr,type);
+ 
+    //printf("face v1 a:%d, b=%d, c:%d\n", face.v1.a, face.v1.b, face.v1.c);
+    //printf("face v2 a:%d, b=%d, c:%d\n", face.v2.a, face.v2.b, face.v2.c);
+    //printf("face v3 a:%d, b=%d, c:%d\n", face.v3.a, face.v3.b, face.v3.c);
+    dynArray_push_back(faces,&face);
 }
 void parse_vertex(const char *input)
 {
     vec4_t vector;
-    // char* endptr = (char*)input;
-    // vector.x = strtof(input+2,&endptr);
-    // vector
-    if(sscanf(input+2,"%f %f %f %f", &vector.x, &vector.y, &vector.z, &vector.w) == 4)
-    {
-        printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", vector.x, vector.y, vector.z,vector.w);
-        dynArray_push_back(vertices,&vector);
-        return;
-    }
-    if(sscanf(input + 2, "%f %f %f", &vector.x, &vector.y, &vector.z) == 3)
-    {
-        printf("x:%.2f, y=%.2f, z:%.2f\n", vector.x, vector.y, vector.z);
-        vector.w = 1.0f;
-        dynArray_push_back(vertices,&vector);
-    }
+    char* endptr = NULL;
+    vector.x = strtof(input+2,&endptr);
+    vector.y = strtof(endptr,&endptr);
+    vector.z = strtof(endptr,&endptr);
+    vector.w = strtof(endptr,&endptr);
+    //printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", vector.x, vector.y, vector.z,vector.w);
+    dynArray_push_back(vertices,&vector);
 }
 
 void parse_line(dynarray_t* input)
@@ -71,14 +97,64 @@ void parse_line(dynarray_t* input)
     if (size > 2) 
     {
       // vertex
-      if (items[0] == 'v' && items[1] == ' ')
+      switch (items[0])
       {
-        parse_vertex(items);
+      case 'v':
+        if(items[1] == ' ')
+            {
+                parse_vertex(items);
+            }
+        break;
+      case 'f':
+        if(items[1] == ' ')
+        {
+            parse_face(items);
+        }
+        break;
+      default:
+        break;
       }
     }
     dynArray_clear(input);
 }
+bool render_vertex(void)
+{
+    size_t size = dynArray_get_length(vertices);
+    const vec4_t *items = dynArray_get_items(vertices);
+    if (items == NULL)
+    {
+        fprintf(stderr, "Items from vertices is NULL\n");
+        return false;
+    }
+    printf("Vertices\n");
 
+    for (size_t i = 0; i < size; i++)
+    {
+        vec4_t item = items[i];
+        printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", item.x, item.y, item.z, item.w);
+    }
+    return true;
+}
+bool render_faces(void)
+{
+    size_t size = dynArray_get_length(faces);
+    const face_t *items = dynArray_get_items(faces);
+    if (items == NULL)
+    {
+        fprintf(stderr, "Items from faces is NULL\n");
+        return false;
+    }
+    printf("faces\n");
+
+    for (size_t i = 0; i < size; i++)
+    {
+        face_t item = items[i];
+        printf("face v1 a:%d, b=%d, c:%d\n", item.v1.a, item.v1.b, item.v1.c);
+        printf("face v2 a:%d, b=%d, c:%d\n", item.v2.a, item.v2.b, item.v2.c);
+        printf("face v3 a:%d, b=%d, c:%d\n", item.v3.a, item.v3.b, item.v3.c);
+    }
+    return true;
+}
 int main(int argc,char* argv[]) {
     if(argc > 2)
     {
@@ -93,7 +169,7 @@ int main(int argc,char* argv[]) {
         return EXIT_FAILURE;
     }
     vertices = dynArray_create(sizeof(vec4_t));
-
+    faces = dynArray_create(sizeof(face_t));
     int ch = 0;
     int parsing = 1;
     dynarray_t* line_buffer = dynArray_create(sizeof(char));
@@ -127,23 +203,20 @@ int main(int argc,char* argv[]) {
             parse_line(line_buffer);
         }
     }
-
-    size_t size = dynArray_get_length(vertices);
-    const vec4_t* items = dynArray_get_items(vertices);
-    if(items == NULL)
+    // render vertex
+    if(!render_vertex())
     {
-        fprintf(stderr,"Items from vertices is NULL\n");
         fclose(file);
         dynArray_free(&line_buffer);
         line_buffer = NULL;
-        return EXIT_FAILURE;
+        return -1;
     }
-    printf("Vertices\n");
-
-    for(size_t i = 0; i < size; i++)
+    if(!render_faces())
     {
-        vec4_t item = items[i];
-        printf("x:%.2f, y=%.2f, z:%.2f, w:%.2f\n", item.x, item.y, item.z,item.w);
+        fclose(file);
+        dynArray_free(&line_buffer);
+        line_buffer = NULL;
+        return -1;
     }
     fclose(file);
     dynArray_free(&line_buffer);
