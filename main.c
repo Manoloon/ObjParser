@@ -155,14 +155,8 @@ bool render_faces(void)
     }
     return true;
 }
-int main(int argc,char* argv[]) {
-    if(argc > 2)
-    {
-        char* input = argv[1];
-    }
-    FILE* file = NULL;
-    const char* filename = "Assets/cube.obj";
-    file = fopen(filename,"r");
+bool start_parsing(FILE* file)
+{
     if(file == NULL)
     {
         fprintf(stderr,"failed to open file\n");
@@ -170,14 +164,14 @@ int main(int argc,char* argv[]) {
     }
     vertices = dynArray_create(sizeof(vec4_t));
     faces = dynArray_create(sizeof(face_t));
+
     int ch = 0;
     int parsing = 1;
     dynarray_t* line_buffer = dynArray_create(sizeof(char));
     if(line_buffer == NULL)
     {
         fprintf(stderr,"line_buffer push_back failed\n");
-        fclose(file);
-        return EXIT_FAILURE;
+        return false;
     }
     // lectura char por char
     while(parsing == 1)
@@ -194,6 +188,7 @@ int main(int argc,char* argv[]) {
             if(dynArray_push_back(line_buffer,&ch) != SUCCESS)
             {
                 fprintf(stderr,"line_buffer push_back failed\n");
+                return false;
             }
         }
         else
@@ -203,23 +198,28 @@ int main(int argc,char* argv[]) {
             parse_line(line_buffer);
         }
     }
-    // render vertex
-    if(!render_vertex())
+    return true;
+}
+int main(int argc,char* argv[]) {
+    if(argc > 2)
+    {
+        char* input = argv[1];
+    }
+    FILE* file = NULL;
+    const char* filename = "Assets/cube.obj";
+    file = fopen(filename,"r");
+    dynarray_t* line_buffer = NULL;
+    bool bsuccess = start_parsing(file);
+    if(bsuccess)
+    {
+        render_vertex();
+        render_faces();
+    }
+    if(file != NULL)
     {
         fclose(file);
-        dynArray_free(&line_buffer);
-        line_buffer = NULL;
-        return -1;
     }
-    if(!render_faces())
-    {
-        fclose(file);
-        dynArray_free(&line_buffer);
-        line_buffer = NULL;
-        return -1;
-    }
-    fclose(file);
     dynArray_free(&line_buffer);
     line_buffer = NULL;
-    return 0;
+    return EXIT_SUCCESS;
 }
