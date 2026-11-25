@@ -218,5 +218,12 @@ int main(int argc,char* argv[]) {
     {
         fclose(file);
     }
+
+    dynArray_free(&vertices);
+    vertices = NULL;
+    dynArray_free(&faces);
+    faces = NULL;
+    //printf("Programa terminado. Pulsa ENTER para salir...");
+    //getchar();
     return EXIT_SUCCESS;
 }
