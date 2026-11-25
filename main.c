@@ -202,12 +202,13 @@ bool start_parsing(FILE* file)
     return true;
 }
 int main(int argc,char* argv[]) {
-    if(argc > 2)
+    char* filename = "Assets/cube.obj";
+    if(argc > 1)
     {
-        char* input = argv[1];
+        filename = argv[1];
     }
     FILE* file = NULL;
-    const char* filename = "Assets/cube.obj";
+    printf("filename is %s\n",filename);
     file = fopen(filename,"r");
     bool bsuccess = start_parsing(file);
     if(bsuccess)
