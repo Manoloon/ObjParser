@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <stdbool.h>
-#include <string.h>
 #include "dynamicArray.h"
 /*
 face_t cube_faces[N_CUBE_FACES]=
