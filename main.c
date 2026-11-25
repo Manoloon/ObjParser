@@ -198,6 +198,7 @@ bool start_parsing(FILE* file)
             parse_line(line_buffer);
         }
     }
+    dynArray_free(&line_buffer);
     return true;
 }
 int main(int argc,char* argv[]) {
@@ -208,7 +209,6 @@ int main(int argc,char* argv[]) {
     FILE* file = NULL;
     const char* filename = "Assets/cube.obj";
     file = fopen(filename,"r");
-    dynarray_t* line_buffer = NULL;
     bool bsuccess = start_parsing(file);
     if(bsuccess)
     {
@@ -219,7 +219,5 @@ int main(int argc,char* argv[]) {
     {
         fclose(file);
     }
-    dynArray_free(&line_buffer);
-    line_buffer = NULL;
     return EXIT_SUCCESS;
 }
