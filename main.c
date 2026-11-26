@@ -40,9 +40,9 @@ typedef struct
 }vec3_t;
 typedef struct 
 {
-    vec3_t v1;
-    vec3_t v2;
-    vec3_t v3;
+    vec3_t vertex_index;
+    vec3_t texture_index;
+    vec3_t normal_index;
 }face_t;
 
 dynarray_t* vertices = NULL;
@@ -54,17 +54,17 @@ void parse_face(const char* input)
     const int type = 10;
     char* endptr = NULL;
     // face
-    face.v1.a = strtol(input+2,&endptr,type);
-    face.v1.b = strtol(endptr+1,&endptr,type);
-    face.v1.c = strtol(endptr+1,&endptr,type);
+    face.vertex_index.a = strtol(input+2,&endptr,type);
+    face.vertex_index.b = strtol(endptr+1,&endptr,type);
+    face.vertex_index.c = strtol(endptr+1,&endptr,type);
     
-    face.v2.a = strtol(endptr+1,&endptr,type);
-    face.v2.b = strtol(endptr+1,&endptr,type);
-    face.v2.c = strtol(endptr+1,&endptr,type);
+    face.texture_index.a = strtol(endptr+1,&endptr,type);
+    face.texture_index.b = strtol(endptr+1,&endptr,type);
+    face.texture_index.c = strtol(endptr+1,&endptr,type);
 
-    face.v3.a = strtol(endptr+1,&endptr,type);
-    face.v3.b = strtol(endptr+1,&endptr,type);
-    face.v3.c = strtol(endptr+1,&endptr,type);
+    face.normal_index.a = strtol(endptr+1,&endptr,type);
+    face.normal_index.b = strtol(endptr+1,&endptr,type);
+    face.normal_index.c = strtol(endptr+1,&endptr,type);
  
     //printf("face v1 a:%d, b=%d, c:%d\n", face.v1.a, face.v1.b, face.v1.c);
     //printf("face v2 a:%d, b=%d, c:%d\n", face.v2.a, face.v2.b, face.v2.c);
@@ -143,13 +143,23 @@ bool render_faces(void)
         return false;
     }
     printf("faces\n");
-
+    printf("vertex index :\n");
     for (size_t i = 0; i < size; i++)
     {
         face_t item = items[i];
-        printf("face v1 a:%d, b=%d, c:%d\n", item.v1.a, item.v1.b, item.v1.c);
-        printf("face v2 a:%d, b=%d, c:%d\n", item.v2.a, item.v2.b, item.v2.c);
-        printf("face v3 a:%d, b=%d, c:%d\n", item.v3.a, item.v3.b, item.v3.c);
+        printf("a:%d, b=%d, c:%d\n", item.vertex_index.a, item.vertex_index.b, item.vertex_index.c);
+    }
+    printf("texture index :\n");
+    for (size_t i = 0; i < size; i++)
+    {
+        face_t item = items[i];
+        printf("a:%d, b=%d, c:%d\n", item.texture_index.a, item.texture_index.b, item.texture_index.c);
+    }
+    printf("normal index :\n");
+    for (size_t i = 0; i < size; i++)
+    {
+        face_t item = items[i];
+        printf("a:%d, b=%d, c:%d\n", item.normal_index.a, item.normal_index.b, item.normal_index.c);
     }
     return true;
 }
